@@ -1,5 +1,5 @@
 import datetime
-
+import time
 import requests
 import re
 import selectorlib
@@ -59,25 +59,26 @@ Have fun!
 
 
 if __name__ == "__main__":
-    source = scape_data(URL)
-    print(source)
-    tour_text = extract(source)
-    print(tour_text)
-    # tour_text = get_tour_text(source)
-    tours = []
-    if tour_text != "No upcoming tours":
-        with open("files/tours.txt", "r") as tour_file:
-            for tour_line in tour_file:
-                tours.append(tour_line.strip("\n"))
+    while True:
+        source = scape_data(URL)
+        tour_text = extract(source)
+        # tour_text = get_tour_text(source)
+        tours = []
+        if tour_text != "No upcoming tours":
+            print(f"Tour found: {tour_text}")
+            with open("files/tours.txt", "r") as tour_file:
+                for tour_line in tour_file:
+                    tours.append(tour_line.strip("\n"))
 
-        if tour_text not in tours:
-            with open("files/tours.txt", "a") as tour_file:
-                tour_file.write(f"{tour_text}\n")
+            if tour_text not in tours:
+                with open("files/tours.txt", "a") as tour_file:
+                    tour_file.write(f"{tour_text}\n")
 
-            print("Sending information.")
-            send_email(tour_text.split(","))
+                print(f"Sending information on tour.")
+                send_email(tour_text.split(","))
 
+            else:
+                print("Tour notification already sent.")
         else:
-            print("Tour notification already sent.")
-    else:
-        print("No info to send.")
+            print("No info to send.")
+        time.sleep(2)
